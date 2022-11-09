@@ -1,0 +1,95 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="Path"
+           x:Key="CrossIconStyle">
+        <Setter Property="Stroke" Value="{DynamicResource ContentBrush}" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Fill" Value="Transparent" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Data">
+            <Setter.Value>
+                <PathGeometry>
+                    <PathFigure StartPoint="0 0">
+                        <PolyLineSegment Points="20,0 20,20, 0,20 0,0" IsStroked="False" />
+                    </PathFigure>
+                    <PathFigure StartPoint="0 0">
+                        <LineSegment Point="20 20" />
+                    </PathFigure>
+                    <PathFigure StartPoint="20 0">
+                        <LineSegment Point="0 20" />
+                    </PathFigure>
+                </PathGeometry>
+            </Setter.Value>
+        </Setter>
+        
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="0.3"
+                                            Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="1"
+                                            Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Path"
+           x:Key="MinimizeIconStyle">
+        <Setter Property="Stroke" Value="{DynamicResource ContentBrush}" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Fill" Value="Transparent" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Data">
+            <Setter.Value>
+                <PathGeometry>
+                    <PathFigure StartPoint="0 0">
+                        <PolyLineSegment x:Name="fff" Points="20,0 20,20, 0,20 0,0" IsStroked="False" />
+                    </PathFigure>
+                    <PathFigure StartPoint="0 10">
+                        <LineSegment Point="20 10" />
+                    </PathFigure>
+                </PathGeometry>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="0.3"
+                                            Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation To="1"
+                                            Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

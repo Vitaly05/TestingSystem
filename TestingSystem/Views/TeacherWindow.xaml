@@ -1,0 +1,1019 @@
+﻿<Window x:Class="TestingSystem.ViewModels.TeacherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestingSystem.ViewModels"
+        xmlns:vm="clr-namespace:TestingSystem.ViewModels"
+        xmlns:be="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d"
+        
+        x:Name="TeacherPanelWindow"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Title="Testing System"
+        Icon="/Views/Tests-icon.png"
+        Height="550" 
+        Width="900">
+
+    <Window.DataContext>
+        <vm:TeacherVM />
+    </Window.DataContext>
+
+
+
+    <Border Style="{DynamicResource MainBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.15*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Row="0">
+                <Grid.InputBindings>
+                    <MouseBinding MouseAction="LeftClick"
+                          Command="{Binding DragMoveWindow}"
+                          CommandParameter="{Binding ElementName=TeacherPanelWindow}" />
+                </Grid.InputBindings>
+                <TextBlock Text="Testing System" 
+                           FontSize="{DynamicResource Small}"
+                           Foreground="{DynamicResource ContentBrush}"
+                           Margin="5"/>
+                <StackPanel Orientation="Horizontal"
+                            FlowDirection="RightToLeft"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0 0 10 0">
+
+                    <Path Style="{DynamicResource CrossIconStyle}">
+                        <Path.InputBindings>
+                            <MouseBinding MouseAction="LeftClick"
+                                Command="{Binding CloseWindow}"
+                                CommandParameter="{Binding ElementName=TeacherPanelWindow}"/>
+                        </Path.InputBindings>
+                    </Path>
+
+                    <Path Style="{DynamicResource MinimizeIconStyle}"
+                          Margin="7.5 0 0 0">
+                        <Path.InputBindings>
+                            <MouseBinding MouseAction="LeftClick"
+                                Command="{Binding MinimizeWindow}"
+                                CommandParameter="{Binding ElementName=TeacherPanelWindow}"/>
+                        </Path.InputBindings>
+                    </Path>
+
+                </StackPanel>
+            </Grid>
+
+            <Menu Grid.Row="1"
+                  VerticalAlignment="Center"
+                  FontSize="{DynamicResource Small}"
+                  Foreground="{DynamicResource ContentBrush}"
+                  Background="Transparent">
+                <MenuItem Header="Меню">
+                    <MenuItem Header="Создать тест"
+                              Command="{Binding ShowCreateTestPanel}"/>
+                    <MenuItem Header="Настройки"
+                              Command="{Binding ShowSettingsWindow}"/>
+                    <MenuItem Header="На главную"
+                              Command="{Binding ShowHomePanel}"/>
+                </MenuItem>
+                <MenuItem Header="Выйти" 
+                          Command="{Binding ReturnToAuthorizationWindow}"
+                          CommandParameter="{Binding ElementName=TeacherPanelWindow}"/>
+            </Menu>
+
+
+
+
+            <!-- MAIN GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding MainGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.3*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="0.15*" />
+                </Grid.RowDefinitions>
+
+                <Grid Background="{DynamicResource SecondBrush}"
+                      Grid.Row="0">
+                    <StackPanel Orientation="Horizontal"
+                        FlowDirection="RightToLeft"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="10">
+                        <Button Content="Выйти"
+                                Width="100"
+                                TabIndex="5"
+                                Command="{Binding ReturnToAuthorizationWindow}"
+                                CommandParameter="{Binding ElementName=TeacherPanelWindow}"/>
+                        <TextBlock Style="{DynamicResource BigTextBlock}" 
+                                   FlowDirection="LeftToRight"
+                                   Text="{Binding UserName}"
+                                   Margin="20 0 0 0"/>
+                    </StackPanel>
+                </Grid>
+
+                <DataGrid Grid.Row="1"
+                          Margin="10"
+                          ItemsSource="{Binding Tests}"
+                          SelectedItem="{Binding SelectedTest}">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Добавить ученика"
+                                      Command="{Binding ShowAddStudentToTestPanel}"
+                                      IsEnabled="{Binding ButtonsWorkWithTestEnabled}"/>
+                            <MenuItem Header="Результаты"
+                                      Command="{Binding ShowResultsPanel}"
+                                      IsEnabled="{Binding ButtonsWorkWithTestEnabled}"/>
+                            <MenuItem Header="Редактировать"
+                                      Command="{Binding ShowEditTestPanel}"
+                                      IsEnabled="{Binding ButtonsWorkWithTestEnabled}"/>
+                            <MenuItem Header="Удалить"
+                                      Command="{Binding RemoveTest}"
+                                      IsEnabled="{Binding ButtonsWorkWithTestEnabled}"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название"
+                                            Width="*"
+                                            Binding="{Binding Path=name}" />
+                        <DataGridTextColumn Header="Описание"
+                                            Width="3*"
+                                            Binding="{Binding Path=description}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+                <Grid Grid.Row="2"
+                      Margin="15 0 15 5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="0.3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+
+                        <Button Width="150"
+                                Content="Редактировать"
+                                TabIndex="4"
+                                IsEnabled="{Binding ButtonsWorkWithTestEnabled}"
+                                Command="{Binding ShowEditTestPanel}"/>
+                        <Button Margin="20 0 0 0"
+                                Width="90"
+                                Content="Удалить"
+                                TabIndex="3"
+                                IsEnabled="{Binding ButtonsWorkWithTestEnabled}"
+                                Command="{Binding RemoveTest}"/>
+                        <Button Margin="30 0"
+                                Width="120"
+                                Content="Результаты"
+                                TabIndex="2"
+                                IsEnabled="{Binding ButtonsWorkWithTestEnabled}"
+                                Command="{Binding ShowResultsPanel}"/>
+                        <Button Width="200"
+                                TabIndex="1"
+                                IsEnabled="{Binding ButtonsWorkWithTestEnabled}"
+                                Command="{Binding ShowAddStudentToTestPanel}" 
+                                Content="Добавить учеников"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Column="2"
+                                FlowDirection="RightToLeft"
+                                Margin="0 0 20 0">
+                        <Button Content="Создать тест" 
+                                Width="150"
+                                TabIndex="0"
+                                Command="{Binding ShowCreateTestPanel}"/>
+                    </StackPanel>
+                </Grid>
+
+            </Grid>
+
+
+
+
+            <!-- CREATE TEST GRID -->
+            <Grid Grid.Row="2" 
+                  Visibility="{Binding CreateTestGridVisibility}"
+                  Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="0.4*" />
+                    <RowDefinition Height="0.25*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextBlock.TextAlignment="Center">
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Text="Название теста"/>
+                    <TextBox Margin="0 5 0 20"
+                             Width="500"
+                             TabIndex="0"
+                             MaxLength="45"
+                             Text="{Binding TestName}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Text="Описание теста (не обязательно)"/>
+                    <TextBox Margin="0 5 0 20"
+                             Width="500"
+                             Height="100"
+                             TextWrapping="Wrap"
+                             TabIndex="1"
+                             MaxLength="200"
+                             Text="{Binding TestDescription}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                        <TextBlock Style="{DynamicResource H1TextBlock}"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Text="Максимальная оценка:"/>
+                        <TextBox TextAlignment="Center"
+                                 Width="100"
+                                 Margin="0 20 0 5"
+                                 TabIndex="4"
+                                 Text="{Binding TestMaxScore}"/>
+                    </StackPanel>
+                    <StackPanel Margin="50 0 0 0" HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <CheckBox Content="Использовать время"
+                                  FontSize="{DynamicResource Regular}"
+                                  IsChecked="{Binding TimerOn}"/>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0 5">
+                            <TextBlock Text="Минуты:" 
+                                   FontSize="{DynamicResource Regular}"/>
+                            <TextBox Margin="10 0 0 0"
+                                     Width="80"
+                                     Text="{Binding Minutes}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="Секунды:" 
+                                   FontSize="{DynamicResource Regular}"/>
+                            <TextBox Margin="10 0 0 0"
+                                     Width="80"
+                                     Text="{Binding Seconds}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+
+                <DockPanel Grid.Row="2"
+                           Margin="20 5 20 5">
+                    <Button DockPanel.Dock="Left"
+                            Width="100"
+                            Content="Отмена"
+                            IsCancel="True"
+                            TabIndex="6"
+                            Command="{Binding DiscardChangesAndShowHomePanel}"/>
+                    <Button DockPanel.Dock="Right"
+                            Width="100"
+                            Content="Далее"
+                            TabIndex="5"
+                            Command="{Binding ShowAddQuestionPanel}"/>
+                    <TextBlock VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0 0 20 0"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                </DockPanel>
+
+            </Grid>
+
+
+
+
+
+            <!-- ADD QUESTION GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding AddQuestionGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.15*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="0.13*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <TextBlock Text="Тип вопроса:  "
+                               FontSize="{DynamicResource Big}"/>
+                    <ComboBox Width="250"
+                              Margin="15 0 0 0">
+                        <ComboBoxItem IsSelected="{Binding IsSelectQuestionTypeWithEnteringAnswer}">
+                            <TextBlock Text="С вводом ответа" 
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsSelected="{Binding IsSelectQuestionTypeWithSelectingAnswer}">
+                            <TextBlock Text="С выбором ответа" 
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" />
+                        </ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- TEST TYPE 1 -->
+                <Grid Grid.Row="1"
+                      Visibility="{Binding QuestionTypeWithEnteringAnswerGridVisibility}"
+                      VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.3*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="3*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Вопрос" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Ответ" />
+                    <TextBox Grid.Column="1"
+                             Margin="10"
+                             TabIndex="0"
+                             Text="{Binding Question}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="10"
+                             Text="{Binding Answer}"
+                             TabIndex="1"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBlock Grid.Row="3"
+                               Grid.ColumnSpan="2"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0 20 0 0"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                </Grid>
+
+                <!-- TEST TYPE 2 -->
+                <Grid Grid.Row="1"
+                      Visibility="{Binding QuestionTypeWithSelectingAnswerGridVisibility}"
+                      VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.6*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="3*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Вопрос*" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Правильный ответ*" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="2"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Неправильный ответ*" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="3"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Неправильный ответ" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="4"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Неправильный ответ" />
+                    <TextBox Grid.Column="1"
+                             Margin="10"
+                             TabIndex="0"
+                             Text="{Binding Question}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="1"
+                             Text="{Binding Answer}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="2"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="2"
+                             Text="{Binding IncorrectAnswer1}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="3"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="3"
+                             Text="{Binding IncorrectAnswer2}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="4"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="4"
+                             Text="{Binding IncorrectAnswer3}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBlock Grid.Row="5"
+                               Grid.ColumnSpan="2"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0 20 0 0"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                </Grid>
+
+
+                <DockPanel Grid.Row="2"
+                           LastChildFill="False"
+                           Margin="25 0 25 20">
+                    <Button DockPanel.Dock="Left"
+                            Content="На главную"
+                            Width="170"
+                            IsCancel="True"
+                            TabIndex="7"
+                            Command="{Binding DiscardChangesAndShowHomePanel}"/>
+                    <StackPanel Orientation="Horizontal"
+                                FlowDirection="RightToLeft"
+                                DockPanel.Dock="Right">
+                        <Button Content="Сохранить тест"
+                                Width="170"
+                                TabIndex="6"
+                                Command="{Binding SaveTest}"/>
+                        <Button Content="Сохранить вопрос"
+                                Width="200"
+                                Margin="20 0 0 0"
+                                TabIndex="5"
+                                Command="{Binding SaveQuestion}"/>
+                    </StackPanel>
+                </DockPanel>
+
+            </Grid>
+
+
+
+
+            <!-- ADD STUDENTS TO TEST GRID -->
+            <Grid Grid.Row="2" 
+                  Visibility="{Binding AddStudentToTestGridVisibility}"
+                  Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.2*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="0.15*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Style="{DynamicResource BigTextBlock }"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center">
+                    <Run Text="Добавление ученика в тест: " />
+                    <Run Text="{Binding SelectedTest.name}" />
+                </TextBlock>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Top"
+                                Margin="10 0">
+                        <TextBlock Style="{DynamicResource BigTextBlock}"
+                                   TextAlignment="Center"
+                                   Margin="0 0 0 5"
+                                   Text="Добавленные ученики" />
+
+                        <DataGrid ItemsSource="{Binding AddedToTestStudents}"
+                                  SelectedItem="{Binding SelectedAddedStudent}"
+                                  FontSize="{DynamicResource Small}"
+                                  Height="230">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Фамилия"
+                                                    Width="*"
+                                                    Binding="{Binding Path=surname}"/>
+                                <DataGridTextColumn Header="Имя"
+                                                    Width="*"
+                                                    Binding="{Binding Path=name}"/>
+                                <DataGridTextColumn Header="Отчество"
+                                                    Width="*"
+                                                    Binding="{Binding Path=patronymic}"/>
+                                <DataGridTextColumn Header="Группа"
+                                                    Width="*"
+                                                    Binding="{Binding Path=group}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <Button Content="Удалить ученика"
+                                Width="200"
+                                Margin="0 5 0 0"
+                                IsDefault="True"
+                                TabIndex="1"
+                                IsEnabled="{Binding RemoveStudentButtonEnabled}"
+                                Command="{Binding RemoveStudentFromTest}"/>
+                        <TextBlock Visibility="{Binding NoStudentsAddedToTest_WarningVisibility}"
+                                   Text="Пока не добавлено ни одного ученика"
+                                   TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                VerticalAlignment="Top"
+                                Margin="10 0">
+                        <TextBlock Style="{DynamicResource BigTextBlock}"
+                                   TextAlignment="Center"
+                                   Margin="0 0 0 5"
+                                   Text="Список учеников" />
+
+                        <DataGrid ItemsSource="{Binding NotAddedToTestStudents}"
+                                  SelectedItem="{Binding SelectedNotAddedStudent}"
+                                  FontSize="{DynamicResource Small}"
+                                  Height="230">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Фамилия"
+                                                    Width="*"
+                                                    Binding="{Binding Path=surname}"/>
+                                <DataGridTextColumn Header="Имя"
+                                                    Width="*"
+                                                    Binding="{Binding Path=name}"/>
+                                <DataGridTextColumn Header="Отчество"
+                                                    Width="*"
+                                                    Binding="{Binding Path=patronymic}"/>
+                                <DataGridTextColumn Header="Группа"
+                                                    Width="*"
+                                                    Binding="{Binding Path=group}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <Button Content="Добавить ученика" 
+                                Width="200"
+                                Margin="0 5 0 0"
+                                IsDefault="True"
+                                TabIndex="0"
+                                IsEnabled="{Binding AddStudentButtonEnabled}"
+                                Command="{Binding AddStudentToTest}"/>
+                    </StackPanel>
+                </Grid>
+
+                <DockPanel Grid.Row="2"
+                           LastChildFill="False"
+                           VerticalAlignment="Center"
+                            Margin="0">
+                    <Button Content="На главную" 
+                            DockPanel.Dock="Left"
+                            Margin="15 0 0 0"
+                            Width="150"
+                            Height="40"
+                            IsCancel="True"
+                            TabIndex="5"
+                            Command="{Binding ShowHomePanel}"/>
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="0 0 15 0"
+                                Height="40">
+                        <ComboBox ItemsSource="{Binding AllGroups}"
+                                  Style="{DynamicResource TopPupup}"
+                                  MinWidth="150"
+                                  TabIndex="2"
+                                  SelectedItem="{Binding SelectedGroup}"/>
+                        <Button Content="Добавить группу"
+                                Width="170"
+                                Margin="15 0 0 0"
+                                TabIndex="3"
+                                Command="{Binding AddGroupToTest}"/>
+                        <Button Content="Удалить группу"
+                                Width="170"
+                                Margin="15 0 0 0"
+                                TabIndex="4"
+                                Command="{Binding RemoveGroupFromTest}"/>
+                    </StackPanel>
+
+                </DockPanel>
+
+            </Grid>
+
+
+
+
+            <!-- RESULTS GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding ResultsGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Style="{DynamicResource H1TextBlock}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap">
+                    <Run>Тест: </Run>
+                    <Run Text="{Binding SelectedTest.name}" />
+                </TextBlock>
+
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <TextBlock Text="Поиск по: "/>
+                    <RadioButton Content="Фамилии"
+                                 IsChecked="{Binding ChangeFilterToSurname_checked}"
+                                 Width="100"
+                                 Margin="20 0 10 0"
+                                 TabIndex="3"
+                                 Command="{Binding SetFilterBySurname}"/>
+                    <RadioButton Content="Группе" 
+                                 Width="100"
+                                 TabIndex="4"
+                                 Command="{Binding SetFilterByGroup}"/>
+                    <TextBox x:Name="searchTexBox"
+                             Width="350"
+                             Margin="20 0 10 0"
+                             TabIndex="0"
+                             Text="{Binding SearchText}">
+                        <be:Interaction.Triggers>
+                            <be:KeyTrigger Key="Return">
+                                <be:InvokeCommandAction Command="{Binding SetSearchText}"
+                                                            CommandParameter="{Binding ElementName=searchTexBox, Path=Text}"/>
+                            </be:KeyTrigger>
+                        </be:Interaction.Triggers>
+                    </TextBox>
+                    <Button Content="Найти" 
+                            Width="80"
+                            IsDefault="True"
+                            TabIndex="1"
+                            Command="{Binding Search}"/>
+                    <Button Content="Сброс"
+                            Width="80"
+                            Margin="10 0 0 0"
+                            TabIndex="2"
+                            Command="{Binding ResetSearchResult}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2" 
+                          Height="230"
+                          Margin="10 0"
+                          ItemsSource="{Binding TestResults}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Фамилия"
+                                            Width="*"
+                                            Binding="{Binding Path=student.surname}" />
+                        <DataGridTextColumn Header="Группа"
+                                            Width="*"
+                                            Binding="{Binding Path=student.group}" />
+                        <DataGridTextColumn Header="Оценка"
+                                            Width="*"
+                                            Binding="{Binding Path=mark}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Button Grid.Row="3"
+                        Content="На главную"
+                        Width="200"
+                        Margin="0 15"
+                        IsCancel="True"
+                        TabIndex="5"
+                        Command="{Binding ShowHomePanel}"/>
+
+            </Grid>
+
+
+
+
+            <!-- TEST EDIT GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding EditTestGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4.5*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextBlock.TextAlignment="Center">
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Text="Название теста"/>
+                    <TextBox Margin="0 5 0 20"
+                             Width="500"
+                             TabIndex="0"
+                             MaxLength="45"
+                             Text="{Binding TestName}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Text="Описание теста (не обязательно)"/>
+                    <TextBox Margin="0 5 0 20"
+                             Width="500"
+                             TabIndex="1"
+                             MaxLength="100"
+                             Text="{Binding TestDescription}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <StackPanel Grid.Row="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                        <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                            <TextBlock Style="{DynamicResource H1TextBlock}"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   Text="Максимальная оценка:"/>
+                            <TextBox TextAlignment="Center"
+                                 Width="100"
+                                 Margin="0 20 0 5"
+                                 TabIndex="4"
+                                 Text="{Binding TestMaxScore}"/>
+                        </StackPanel>
+                        <StackPanel Margin="50 0 0 0" HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                            <CheckBox Content="Использовать время"
+                                  FontSize="{DynamicResource Regular}"
+                                  IsChecked="{Binding TimerOn}"/>
+                            <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0 5">
+                                <TextBlock Text="Минуты:" 
+                                   FontSize="{DynamicResource Regular}"/>
+                                <TextBox Margin="10 0 0 0"
+                                     Width="80"
+                                     Text="{Binding Minutes}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                                <TextBlock Text="Секунды:" 
+                                   FontSize="{DynamicResource Regular}"/>
+                                <TextBox Margin="10 0 0 0"
+                                     Width="80"
+                                     Text="{Binding Seconds}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Grid.Row="3"
+                               Grid.ColumnSpan="2"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0 20 0 0"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                </StackPanel>
+
+                <DockPanel Grid.Row="1"
+                           Margin="25 15"
+                           LastChildFill="False">
+                    <Button Content="Отмена"
+                            Width="100"
+                            DockPanel.Dock="Left"
+                            IsCancel="True"
+                            TabIndex="4"
+                            Command="{Binding DiscardChangesAndShowHomePanel}"/>
+                    <Button Content="Далее"
+                            Width="100"
+                            DockPanel.Dock="Right"
+                            TabIndex="3"
+                            Command="{Binding ShowEditQuestionPanel}"/>
+                </DockPanel>
+
+            </Grid>
+
+
+
+            <!-- QUESTION EDIT GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding EditQuestionGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="0.5*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <TextBlock Text="Тип вопроса:  "
+                               FontSize="{DynamicResource Big}"/>
+                    <ComboBox Width="250"
+                              Margin="15 0 0 0">
+                        <ComboBoxItem IsSelected="{Binding IsSelectQuestionTypeWithEnteringAnswer}">
+                            <TextBlock Text="С вводом ответа" 
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" />
+                        </ComboBoxItem>
+                        <ComboBoxItem IsSelected="{Binding IsSelectQuestionTypeWithSelectingAnswer}">
+                            <TextBlock Text="С выбором ответа" 
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" />
+                        </ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- TEST TYPE 1 -->
+                <Grid Grid.Row="1"
+                      VerticalAlignment="Center"
+                      Visibility="{Binding QuestionTypeWithEnteringAnswerGridVisibility}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.3*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="3*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Вопрос" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Ответ" />
+                    <TextBox Grid.Column="1"
+                             Margin="10"
+                             TabIndex="0"
+                             Text="{Binding Question}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="1"
+                             Text="{Binding Answer}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                </Grid>
+
+                <!-- TEST TYPE 2 -->
+                <Grid Grid.Row="1"
+                      Visibility="{Binding QuestionTypeWithSelectingAnswerGridVisibility}"
+                      VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.6*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Вопрос*" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Правильный ответ*" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="2"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Неправильный ответ*" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="3"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Неправильный ответ" />
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               Grid.Row="4"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="Неправильный ответ" />
+                    <TextBox Grid.Column="1"
+                             Margin="10"
+                             TabIndex="0"
+                             Text="{Binding Question}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="1"
+                             Text="{Binding Answer}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="2"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="2"
+                             Text="{Binding IncorrectAnswer1}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="3"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="3"
+                             Text="{Binding IncorrectAnswer2}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                    <TextBox Grid.Row="4"
+                             Grid.Column="1"
+                             Margin="10"
+                             TabIndex="4"
+                             Text="{Binding IncorrectAnswer3}"
+                             SpellCheck.IsEnabled="True"
+                             Language="ru-ru"/>
+                </Grid>
+
+                <TextBlock Grid.Row="2"
+                               Grid.ColumnSpan="2"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                
+                <StackPanel Grid.Row="3"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="25 15">
+                    <Button Content="На главную" 
+                            Width="150"
+                            IsCancel="True"
+                            TabIndex="8"
+                            Command="{Binding DiscardChangesAndShowHomePanel}"/>
+                    <Button Content="Удалить вопрос"
+                            Margin="40 0 30 0"
+                            Width="160"
+                            TabIndex="7"
+                            Command="{Binding RemoveQuestion}"/>
+                    <Button Margin="0 0 30 0"
+                            Width="200"
+                            TabIndex="5"
+                            Command="{Binding AddQuestion}">
+                        <TextBlock TextAlignment="Center">
+                            <Run>Сохранить вопрос и</Run>
+                            <LineBreak/>
+                            <Run>добавить новый</Run>
+                        </TextBlock>
+                    </Button>
+                    <Button Width="230"
+                            TabIndex="6"
+                            Command="{Binding NextQuestion}">
+                        <TextBlock TextAlignment="Center">
+                            <Run>Сохранить вопрос и</Run>
+                            <LineBreak />
+                            <Run>перейти к следующему</Run>
+                        </TextBlock>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>

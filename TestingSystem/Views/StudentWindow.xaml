@@ -1,0 +1,374 @@
+﻿<Window x:Class="TestingSystem.ViewModels.StudentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestingSystem.Views"
+        xmlns:vm="clr-namespace:TestingSystem.ViewModels"
+        xmlns:be="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d"
+        
+        x:Name="StudentPanelWindow"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Title="Testing System"
+        Icon="/Views/Tests-icon.png"
+        Height="550" 
+        Width="900">
+
+    <Window.DataContext>
+        <vm:StudentVM />
+    </Window.DataContext>
+
+    <Border Style="{DynamicResource MainBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.15*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+
+
+            <Grid Grid.Row="0">
+                <Grid.InputBindings>
+                    <MouseBinding MouseAction="LeftClick"
+                          Command="{Binding DragMoveWindow}"
+                          CommandParameter="{Binding ElementName=StudentPanelWindow}" />
+                </Grid.InputBindings>
+                <TextBlock Text="Testing System" 
+                           FontSize="{DynamicResource Small}"
+                           Foreground="{DynamicResource ContentBrush}"
+                           Margin="5"/>
+                <StackPanel Orientation="Horizontal"
+                            FlowDirection="RightToLeft"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0 0 10 0">
+
+                    <Path Style="{DynamicResource CrossIconStyle}">
+                        <Path.InputBindings>
+                            <MouseBinding MouseAction="LeftClick"
+                                Command="{Binding CloseWindow}"
+                                CommandParameter="{Binding ElementName=StudentPanelWindow}"/>
+                        </Path.InputBindings>
+                    </Path>
+
+                    <Path Style="{DynamicResource MinimizeIconStyle}"
+                          Margin="7.5 0 0 0">
+                        <Path.InputBindings>
+                            <MouseBinding MouseAction="LeftClick"
+                                Command="{Binding MinimizeWindow}"
+                                CommandParameter="{Binding ElementName=StudentPanelWindow}"/>
+                        </Path.InputBindings>
+                    </Path>
+
+                </StackPanel>
+            </Grid>
+
+            <Menu Grid.Row="1"
+                  VerticalAlignment="Center"
+                  FontSize="{DynamicResource Small}"
+                  Foreground="{DynamicResource ContentBrush}"
+                  Background="Transparent">
+                <MenuItem Header="Меню">
+                    <MenuItem Header="Настройки"
+                              Command="{Binding ShowSettingsWindow}"/>
+                    <MenuItem Header="На главную"
+                              Command="{Binding ShowHomePanel}"/>
+                </MenuItem>
+                <MenuItem Header="Выйти" 
+                          Command="{Binding ReturnToAuthorizationWindow}"
+                          CommandParameter="{Binding ElementName=StudentPanelWindow}"/>
+            </Menu>
+
+
+            <!-- MAIN GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding MainGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.3*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="0.2*" />
+                </Grid.RowDefinitions>
+
+                <Grid Background="{DynamicResource SecondBrush}"
+                      Grid.Row="0">
+                    <StackPanel Orientation="Horizontal"
+                        FlowDirection="RightToLeft"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="10">
+                        <Button Content="Выйти"
+                                Width="100"
+                                TabIndex="1"
+                                Command="{Binding ReturnToAuthorizationWindow}"
+                                CommandParameter="{Binding ElementName=StudentPanelWindow}"/>
+                        <TextBlock Style="{DynamicResource BigTextBlock}" 
+                                   FlowDirection="LeftToRight"
+                                   Text="{Binding UserName}"
+                                   Margin="20 0 0 0"/>
+                    </StackPanel>
+                </Grid>
+
+                <DataGrid Grid.Row="1"
+                          Margin="10"
+                          ItemsSource="{Binding Tests}"
+                          SelectedItem="{Binding SelectedTest}">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Пройти"
+                                      Command="{Binding StartSelectedTest}"
+                                      IsEnabled="{Binding ButtonsWorkWithTestEnabled}"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название теста"
+                                            Width="*"
+                                            Binding="{Binding Path=name}" />
+                        <DataGridTextColumn Header="Описание теста"
+                                            Width="*"
+                                            Binding="{Binding Path=description}" />
+                        <DataGridTextColumn Header="Оценка"
+                                            Width="*"
+                                            Binding="{Binding Path=testInfoForThisStudent.mark}" />
+                    </DataGrid.Columns>
+                    <be:Interaction.Triggers>
+                        <be:EventTrigger EventName="SelectionChanged">
+                            <be:EventTrigger.Actions>
+                                <be:InvokeCommandAction Command="{Binding EnableButtons}" />
+                            </be:EventTrigger.Actions>
+                        </be:EventTrigger>
+                    </be:Interaction.Triggers>
+                </DataGrid>
+
+
+                <StackPanel Grid.Row="2" 
+                            Margin="0 0 20 20"
+                            Orientation="Horizontal"
+                            FlowDirection="RightToLeft">
+                    <Button Content="Пройти"
+                            Width="100"
+                            TabIndex="0"
+                            IsEnabled="{Binding ButtonsWorkWithTestEnabled}"
+                            Command="{Binding StartSelectedTest }"/>
+                </StackPanel>
+                
+
+            </Grid>
+
+
+
+            
+            <!-- PASSAGE TEST GRID -->
+            <Grid Grid.Row="2"
+                  Visibility="{Binding PassageTestGridVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="0.2*" />
+                </Grid.RowDefinitions>
+
+
+                <!-- QUESTION TYPE 1 -->
+                <Grid Visibility="{Binding QuestionWithEnteringAnswersGridVisibility}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="0.5*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               Text="{Binding Question}"/>
+
+                    <StackPanel Grid.Row="1"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center">
+                        <StackPanel Grid.Row="1"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center"
+                                Margin="0 15 0 0">
+                            <TextBlock Style="{DynamicResource H1TextBlock}"
+                                       Text="Ответ:"
+                                       VerticalAlignment="Center"/>
+                            <TextBox Grid.Row="1"
+                                     x:Name="answerField"
+                                     Width="400"
+                                     Margin="10 0 0 0"
+                                     TabIndex="0"
+                                     Text="{Binding StudentAnswer}">
+                                <be:Interaction.Triggers>
+                                    <be:KeyTrigger Key="Return">
+                                        <be:InvokeCommandAction Command="{Binding SetAnswer}"
+                                                            CommandParameter="{Binding ElementName=answerField, Path=Text}"/>
+                                    </be:KeyTrigger>
+                                </be:Interaction.Triggers>
+                            </TextBox>
+                        </StackPanel>
+                        <TextBlock Foreground="{DynamicResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0 20 0 10"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                    </StackPanel>
+                    
+                </Grid>
+
+
+                <!-- QUESTION TYPE 2 -->
+                <Grid Visibility="{Binding QuestionWithSelectingAnswersGridVisibility}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{DynamicResource H1TextBlock}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               Text="{Binding Question}"/>
+
+                    <StackPanel Grid.Row="1"
+                                Margin="10 0"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <RadioButton Width="auto"
+                                         MinWidth="100"
+                                         Margin="0 0 5 5"
+                                         TabIndex="0"
+                                         Visibility="{Binding Answer1Visibility}"
+                                         IsChecked="{Binding Answer1Checked}"
+                                         Command="{Binding SelectAnswer}"
+                                         x:Name="Answer1"
+                                         CommandParameter="{Binding ElementName=Answer1, Path=Content.Text}">
+                                <TextBlock TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="5 0"
+                                           Text="{Binding Answers[0]}" />
+                            </RadioButton>
+                            <RadioButton Width="auto"
+                                         MinWidth="100"
+                                         Grid.Column="1"
+                                         Margin="5 0 0 5"
+                                         TabIndex="1"
+                                         Visibility="{Binding Answer2Visibility}"
+                                         IsChecked="{Binding Answer2Checked}"
+                                         Command="{Binding SelectAnswer}"
+                                         x:Name="Answer2"
+                                         CommandParameter="{Binding ElementName=Answer2, Path=Content.Text}">
+                                <TextBlock TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="5 0"
+                                           Text="{Binding Answers[1]}" />
+                            </RadioButton>
+                            <RadioButton Width="auto"
+                                         MinWidth="100"
+                                         Grid.Row="1"
+                                         Grid.ColumnSpan="{Binding Answer3ColSpan}"
+                                         HorizontalAlignment="Center"
+                                         Margin="0 5 5 0"
+                                         TabIndex="2"
+                                         Visibility="{Binding Answer3Visibility}"
+                                         IsChecked="{Binding Answer3Checked}"
+                                         Command="{Binding SelectAnswer}"
+                                         x:Name="Answer3"
+                                         CommandParameter="{Binding ElementName=Answer3, Path=Content.Text}">
+                                <TextBlock TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="5 0"
+                                           Text="{Binding Answers[2]}" />
+                            </RadioButton>
+                            <RadioButton Width="auto"
+                                         MinWidth="100"
+                                         Grid.Row="1"
+                                         Grid.Column="1"
+                                         Margin="5 5 0 0"
+                                         TabIndex="3"
+                                         Visibility="{Binding Answer4Visibility}"
+                                         IsChecked="{Binding Answer4Checked}"
+                                         Command="{Binding SelectAnswer}"
+                                         x:Name="Answer4"
+                                         CommandParameter="{Binding ElementName=Answer4, Path=Content.Text}">
+                                <TextBlock TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="5 0"
+                                           Text="{Binding Answers[3]}" />
+                            </RadioButton>
+                        </Grid>
+                        <TextBlock Foreground="{DynamicResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0 20 0 10"
+                               Text="{Binding ErrorText}"
+                               Visibility="{Binding ErrorVisibitity}"/>
+                    </StackPanel>
+
+                </Grid>
+
+
+                <DockPanel Grid.Row="1"
+                           Grid.ColumnSpan="2">
+                    <Button DockPanel.Dock="Right"
+                            Content="Следующий вопрос"
+                            Margin="10"
+                            Width="200" 
+                            IsDefault="True"
+                            TabIndex="4"
+                            Command="{Binding NextQuestion}"/>
+
+                    <Button DockPanel.Dock="Left"
+                            Content="Закончить тест"
+                            Margin="10"
+                            Width="200" 
+                            IsCancel="True"
+                            Command="{Binding EndTest}"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <TextBlock Visibility="{Binding TimerVisibility}"
+                               FontSize="{DynamicResource Regular}"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                                   Margin="0 0 50 0">
+                        <Run>Осталось времени: </Run>
+                        <LineBreak />
+                        <Run Text="{Binding TestTimer.StringTime}" />
+                        </TextBlock>
+                        <TextBlock FontSize="{DynamicResource Regular}"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center">
+                        <Run>Вопрос: </Run>
+                        <Run Text="{Binding QuestionNumber}" />
+                        <Run>/</Run>
+                        <Run Text="{Binding QuestionCount}" />
+                        </TextBlock>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+            
+        </Grid>
+    </Border>
+</Window>
